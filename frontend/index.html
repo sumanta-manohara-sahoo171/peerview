@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeerView</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <h2>PeerView</h2>
+        <div style="display: flex; gap: 10px;">
+            <button id="nav-feed-btn" class="hidden secondary-btn">Live Feed</button>
+            <button id="nav-profile-btn" class="hidden secondary-btn">My Profile</button>
+            <button id="logout-btn" class="hidden secondary-btn">Log Out</button>
+            <button id="nav-admin-btn" class="hidden secondary-btn">Analytics</button>
+            <button id="theme-toggle-btn" class="theme-toggle">🌙 Dark Mode</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="auth-section" class="card">
+            <h3 style="margin-bottom: 0.5rem;">Welcome Back</h3>
+            <p class="subtitle" id="auth-toggle-text">
+                Don't have an account? <a href="#" id="show-register" style="color: var(--primary); font-weight: 600; text-decoration: none;">Sign Up</a>
+            </p>
+
+            <form id="login-form">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="primary-btn">Sign In</button>
+                <p id="login-error" class="error-text hidden"></p>
+            </form>
+        </section>
+
+        <section id="feed-section" class="hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Live Feed</h2>
+                <button id="load-posts-btn" class="secondary-btn" style="width: auto; margin: 0; padding: 5px 15px;">Refresh Feed</button>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="margin-top: 0; margin-bottom: 15px;">Create a Post</h3>
+                <form id="create-post-form">
+                    <textarea id="new-post-content" rows="3" placeholder="What's on your mind? Share your thoughts, project ideas, or study questions here..." style="width: 100%; box-sizing: border-box; padding: 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-color); color: var(--text-main); font-family: inherit; resize: vertical;"></textarea>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label for="file-upload" class="secondary-btn" style="cursor: pointer; padding: 8px 15px; white-space: nowrap; margin: 0;">📎 Attach File</label>
+                            <input type="file" id="file-upload" class="hidden" accept=".png, .jpg, .jpeg, .gif, .pdf, .docx">
+                            <span id="file-name-display" style="font-size: 0.85rem; color: var(--text-muted); word-break: break-all;"></span>
+                        </div>
+
+                        <button type="submit" class="primary-btn" style="width: auto; padding: 8px 25px; margin: 0; white-space: nowrap;">Post to Feed</button>
+                    </div>
+                </form>
+            </div>
+
+            <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 10px; width: 100%;">
+                <input type="text" id="search-input" placeholder="Search posts for topics, keywords, or questions..." style="flex-grow: 1; min-width: 0; padding: 12px 15px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-size: 1rem; box-sizing: border-box; margin: 0;">
+
+                <button id="search-btn" class="primary-btn" style="width: auto; padding: 12px 20px; white-space: nowrap; flex-shrink: 0; margin: 0;">Search</button>
+                <button id="clear-search-btn" class="secondary-btn" style="width: auto; padding: 12px 20px; white-space: nowrap; flex-shrink: 0; margin: 0;">Clear</button>
+            </div>
+
+            <div id="posts-container"></div>
+            <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+                <button id="load-more-btn" class="secondary-btn hidden" style="width: auto; padding: 8px 25px;">Load More Posts ↓</button>
+                <p id="no-more-posts-text" class="hidden" style="color: var(--text-muted); font-size: 0.9rem;">You've reached the end of the feed.</p>
+            </div>
+        </section>
+
+        <section id="profile-section" class="hidden">
+            <div class="card" style="margin-bottom: 20px; display: flex; align-items: center; gap: 20px;">
+                <div id="profile-avatar" style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;">
+                    ?
+                </div>
+
+                <div style="flex: 1;">
+                    <h2 id="profile-username" style="margin: 0; font-size: 1.5rem;">Loading...</h2>
+                    <p id="profile-role" style="color: var(--primary); font-weight: 600; font-size: 0.85rem; margin: 5px 0;">Student</p>
+                    <p id="profile-bio" style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;">Loading bio...</p>
+                </div>
+
+                <button id="edit-profile-btn" class="secondary-btn">Edit Profile</button>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3>My Posts</h3>
+                <button id="load-my-posts-btn" class="secondary-btn">Refresh My Posts</button>
+            </div>
+            <div id="my-posts-container"></div>
+        </section>
+
+        <section id="admin-section" class="hidden">
+            <h2>Admin Control Panel</h2>
+
+            <div class="card" style="margin-bottom: 20px;">
+                <h3>Platform Stats</h3>
+                <p style="font-size: 1.2rem;">Total Posts on Platform: <strong id="stat-total-posts" style="color: var(--primary);">0</strong></p>
+            </div>
+
+            <div class="card">
+                <h3 style="color: #dc2626;">🚩 Reported Reviews</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
+                    These reviews have been flagged by students for moderation. As an admin, you can see the true identities behind the anonymity.
+                </p>
+                <div id="reported-comments-container">
+                    </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="edit-profile-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+        <div class="card" style="width: 400px; max-width: 90%; background: var(--bg-color);">
+            <h3 style="margin-top: 0;">Edit Profile</h3>
+
+            <form id="edit-profile-form">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">About Me (Bio)</label>
+                <textarea id="edit-bio" rows="4" style="width: 100%; margin-bottom: 15px; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main);"></textarea>
+
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Profile Picture</label>
+                <input type="file" id="edit-avatar" accept="image/*" style="margin-bottom: 20px; width: 100%;">
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" id="close-modal-btn" class="secondary-btn">Cancel</button>
+                    <button type="submit" class="primary-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

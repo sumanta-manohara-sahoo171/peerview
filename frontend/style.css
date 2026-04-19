@@ -1,0 +1,118 @@
+/* 1. THE VARIABLES - Everything follows these rules */
+:root {
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --nav-bg: #ffffff;
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+}
+
+body.dark-mode {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --nav-bg: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #334155;
+}
+
+/* 2. BASE RESET */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    transition: background 0.3s, color 0.3s;
+}
+
+/* 3. LAYOUT COMPONENTS */
+.navbar {
+    width: 100%;
+    background-color: var(--nav-bg);
+    padding: 1rem 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.container { max-width: 800px; margin: 3rem auto; padding: 0 1rem; }
+
+.card, .post-card {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    margin: 0 auto;
+    border: 1px solid var(--border);
+}
+
+#auth-section { max-width: 400px; }
+
+/* 4. FORM ELEMENTS */
+.input-group { margin-bottom: 1.2rem; }
+.input-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
+
+input, textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--card-bg); /* Follows theme */
+    color: var(--text-main);          /* Follows theme */
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input:focus, textarea:focus { border-color: var(--primary); }
+
+/* 5. BUTTONS */
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.2s;
+}
+
+.primary-btn { background-color: var(--primary); color: white; width: 100%; }
+.primary-btn:hover { background-color: var(--primary-hover); }
+
+.secondary-btn {
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+}
+
+.secondary-btn:hover { background-color: var(--bg-color); }
+
+.theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 5px 12px;
+    font-size: 0.8rem;
+}
+
+/* 6. UTILITIES */
+.subtitle { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem; }
+.feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.post-content { margin-bottom: 1rem; line-height: 1.5; font-size: 1.1rem; font-weight: 500;}
+.post-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
+.hidden { display: none !important; }
+.error-text { color: #ef4444; margin-top: 1rem; font-size: 0.9rem; text-align: center; }
+
+.secondary-btn {
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    display: inline-block; /* Essential for labels */
+}

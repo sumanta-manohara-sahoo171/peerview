@@ -1,0 +1,28 @@
+# 1. Python Cache (Generated automatically, no need to share)
+__pycache__/
+*.pyc
+*.pyo
+
+# 2. Virtual Environments (Huge folders, specific to your computer)
+venv/
+env/
+
+# 3. Database Files (Contains private user data & passwords!)
+*.db
+backend/peerview.db
+peerview.db
+
+# 4. User Uploads (Avatars, PDFs, Images from testing)
+uploads/
+backend/uploads/
+frontend/uploads/
+backend/static/uploads/
+
+# 5. Environment Variables (For API keys or secrets later)
+.env
+
+# 6. System Files (Hidden junk files created by Windows/Mac)
+.DS_Store
+Thumbs.db
+
+.idea/
