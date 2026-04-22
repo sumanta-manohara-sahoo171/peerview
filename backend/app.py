@@ -1,7 +1,5 @@
-# app.py
 import os
-from flask import send_from_directory
-from flask import Flask, jsonify
+from flask import send_from_directory, Flask, jsonify
 from api.auth import auth_bp
 from api.posts import posts_bp
 from api.interactions import interactions_bp
@@ -9,17 +7,18 @@ from api.moderation import moderation_bp
 from config import Config
 from database import get_db_connection
 
-UPLOAD_FOLDER = 'uploads'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
 
 def create_app():
     # 1. Create the app ONCE
     app = Flask(__name__)
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config.from_object(Config)
-    # In backend/app.py
-    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
+
+    # Define the upload folder exactly where auth.py is saving the images
+    UPLOAD_FOLDER = os.path.join(app.root_path, 'uploads')
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+    # Ensure the directory actually exists when the app starts
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
     # 2. Attach the CORS Sledgehammer to it
     @app.after_request
@@ -55,6 +54,7 @@ def create_app():
         })
 
     return app
+
 
 if __name__ == '__main__':
     app = create_app()

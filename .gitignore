@@ -26,3 +26,6 @@ backend/static/uploads/
 Thumbs.db
 
 .idea/
+
+# Ignore environment variables
+.env

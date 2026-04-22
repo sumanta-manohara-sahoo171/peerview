@@ -40,6 +40,28 @@ const clearSearchBtn = document.getElementById("clear-search-btn");
 const loadMoreBtn = document.getElementById("load-more-btn");
 const noMorePostsText = document.getElementById("no-more-posts-text");
 
+// OTP Elements (Forgot Password)
+const forgotPasswordLink = document.getElementById("forgot-password-link");
+const fpModal = document.getElementById("forgot-password-modal");
+const fpCloseBtn = document.getElementById("fp-close-btn");
+const fpStep1 = document.getElementById("fp-step-1");
+const fpStep2 = document.getElementById("fp-step-2");
+const fpEmailInput = document.getElementById("fp-email");
+const fpOtpInput = document.getElementById("fp-otp");
+const fpNewPasswordInput = document.getElementById("fp-new-password");
+const fpSendOtpBtn = document.getElementById("fp-send-otp-btn");
+const fpResetBtn = document.getElementById("fp-reset-btn");
+const fpMsg = document.getElementById("fp-msg");
+
+// OTP Elements (Email Verification)
+const verifyLink = document.getElementById("verify-link");
+const verifyModal = document.getElementById("verify-modal");
+const verifyEmailInput = document.getElementById("verify-email");
+const verifyOtpInput = document.getElementById("verify-otp");
+const verifySubmitBtn = document.getElementById("verify-submit-btn");
+const verifyCloseBtn = document.getElementById("verify-close-btn");
+const verifyMsg = document.getElementById("verify-msg");
+
 let isLoginMode = true;
 let currentPage = 1;
 let currentSearchQuery = "";
@@ -70,9 +92,26 @@ if (authToggleLink) {
     authToggleLink.addEventListener("click", (e) => {
         e.preventDefault();
         isLoginMode = !isLoginMode;
+
         if(authTitle) authTitle.textContent = isLoginMode ? "Welcome Back" : "Create Account";
         if(authBtn) authBtn.textContent = isLoginMode ? "Sign In" : "Register";
         authToggleLink.textContent = isLoginMode ? "Sign Up" : "Back to Login";
+
+        const usernameGroup = document.getElementById("username-group");
+        const usernameInput = document.getElementById("username");
+        if (usernameGroup && usernameInput) {
+            if (isLoginMode) {
+                usernameGroup.classList.add("hidden");
+                usernameInput.removeAttribute("required");
+                if (forgotPasswordLink) forgotPasswordLink.classList.remove("hidden");
+                if (verifyLink) verifyLink.classList.remove("hidden");
+            } else {
+                usernameGroup.classList.remove("hidden");
+                usernameInput.setAttribute("required", "true");
+                if (forgotPasswordLink) forgotPasswordLink.classList.add("hidden");
+                if (verifyLink) verifyLink.classList.add("hidden");
+            }
+        }
     });
 }
 
@@ -81,15 +120,19 @@ if (loginForm) {
         e.preventDefault();
         if(errorText) errorText.classList.add("hidden");
 
-        const username = document.getElementById("username").value;
+        const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
+        const usernameInput = document.getElementById("username");
+        const username = usernameInput ? usernameInput.value.trim() : "";
+
         const endpoint = isLoginMode ? "/auth/login" : "/auth/register";
+        const payload = isLoginMode ? { email, password } : { username, email, password };
 
         try {
             const response = await fetch(`${API_URL}${endpoint}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify(payload)
             });
             const data = await response.json();
 
@@ -98,9 +141,18 @@ if (loginForm) {
                     localStorage.setItem("peerview_token", data.token);
                     showFeed();
                 } else {
-                    alert("Account created! Please log in.");
+                    // NEW: Automatically show Verification Modal when registration is successful
                     isLoginMode = true;
                     authToggleLink.click();
+                    loginForm.reset();
+
+                    if(verifyModal) {
+                        verifyModal.classList.remove("hidden");
+                        verifyEmailInput.value = email;
+                        verifyOtpInput.value = "";
+                        verifyMsg.style.color = "#16a34a";
+                        verifyMsg.textContent = "Account created! Check your email for the code.";
+                    }
                 }
             } else {
                 if(errorText) {
@@ -116,6 +168,153 @@ if (loginForm) {
                 errorText.classList.remove("hidden");
             }
         }
+    });
+}
+
+// --- Verify Email Flow ---
+if (verifyLink) {
+    verifyLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        if(verifyModal) {
+            verifyModal.classList.remove("hidden");
+            verifyEmailInput.value = document.getElementById("email").value;
+            verifyOtpInput.value = "";
+            verifyMsg.textContent = "";
+        }
+    });
+}
+
+if (verifyCloseBtn) {
+    verifyCloseBtn.addEventListener("click", () => {
+        if(verifyModal) verifyModal.classList.add("hidden");
+    });
+}
+
+if (verifySubmitBtn) {
+    verifySubmitBtn.addEventListener("click", async () => {
+        const email = verifyEmailInput.value.trim();
+        const otp = verifyOtpInput.value.trim();
+
+        if(!email || !otp) return alert("Please enter both your email and the 6-digit OTP.");
+
+        verifySubmitBtn.textContent = "Verifying...";
+        verifySubmitBtn.disabled = true;
+
+        try {
+            const response = await fetch(`${API_URL}/auth/verify-email`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, otp })
+            });
+            const data = await response.json();
+
+            if(response.ok) {
+                alert("Account verified! You can now log in.");
+                verifyModal.classList.add("hidden");
+                document.getElementById("email").value = email;
+                document.getElementById("password").focus();
+            } else {
+                verifyMsg.style.color = "#dc2626";
+                verifyMsg.textContent = data.message;
+            }
+        } catch(e) {
+            verifyMsg.style.color = "#dc2626";
+            verifyMsg.textContent = "Error connecting to server.";
+        }
+        verifySubmitBtn.textContent = "Verify & Activate";
+        verifySubmitBtn.disabled = false;
+    });
+}
+
+// --- Forgot Password OTP Flow ---
+if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        if(fpModal) {
+            fpModal.classList.remove("hidden");
+            fpStep1.classList.remove("hidden");
+            fpStep2.classList.add("hidden");
+            fpEmailInput.value = "";
+            fpOtpInput.value = "";
+            fpNewPasswordInput.value = "";
+            fpMsg.textContent = "";
+        }
+    });
+}
+
+if (fpCloseBtn) {
+    fpCloseBtn.addEventListener("click", () => {
+        if(fpModal) fpModal.classList.add("hidden");
+    });
+}
+
+if (fpSendOtpBtn) {
+    fpSendOtpBtn.addEventListener("click", async () => {
+        const email = fpEmailInput.value.trim();
+        if(!email) return alert("Please enter your email.");
+
+        fpSendOtpBtn.textContent = "Sending...";
+        fpSendOtpBtn.disabled = true;
+
+        try {
+            const response = await fetch(`${API_URL}/auth/forgot-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email })
+            });
+            const data = await response.json();
+
+            if(response.ok) {
+                fpMsg.style.color = "#16a34a"; // Green
+                fpMsg.textContent = "OTP sent! Check your inbox.";
+                fpStep1.classList.add("hidden");
+                fpStep2.classList.remove("hidden");
+            } else {
+                fpMsg.style.color = "#dc2626"; // Red
+                fpMsg.textContent = data.message;
+            }
+        } catch(e) {
+            fpMsg.style.color = "#dc2626";
+            fpMsg.textContent = "Error connecting to server.";
+        }
+        fpSendOtpBtn.textContent = "Send OTP";
+        fpSendOtpBtn.disabled = false;
+    });
+}
+
+if (fpResetBtn) {
+    fpResetBtn.addEventListener("click", async () => {
+        const email = fpEmailInput.value.trim();
+        const otp = fpOtpInput.value.trim();
+        const new_password = fpNewPasswordInput.value;
+
+        if(!otp || !new_password) return alert("Please enter the OTP and a new password.");
+
+        fpResetBtn.textContent = "Resetting...";
+        fpResetBtn.disabled = true;
+
+        try {
+            const response = await fetch(`${API_URL}/auth/reset-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, otp, new_password })
+            });
+            const data = await response.json();
+
+            if(response.ok) {
+                alert("Password reset successful! You can now log in.");
+                fpModal.classList.add("hidden");
+                document.getElementById("email").value = email; // Pre-fill login email
+            } else {
+                fpMsg.style.color = "#dc2626";
+                fpMsg.textContent = data.message;
+            }
+        } catch(e) {
+            fpMsg.style.color = "#dc2626";
+            fpMsg.textContent = "Error connecting to server.";
+        }
+        fpResetBtn.textContent = "Confirm Password Reset";
+        fpResetBtn.disabled = false;
     });
 }
 
@@ -144,7 +343,6 @@ if (createPostForm) {
                 if(fileInput) fileInput.value = "";
                 if(fileNameDisplay) fileNameDisplay.textContent = "";
 
-                // Clear any search and fetch fresh feed (page 1)
                 if (searchInput) searchInput.value = "";
                 if(loadPostsBtn) loadPostsBtn.click();
             } else {
@@ -253,7 +451,7 @@ function createPostHTML(post) {
         </div>
 
         <div id="comments-container-${post.id}" style="margin-top:10px;">
-            <button onclick="window.loadComments(${post.id}, ${post.author_id})" class="secondary-btn" style="width:100%;">View Reviews</button>
+            <button onclick="window.loadComments(${post.id}, ${post.author_id})" class="secondary-btn w-100">View Reviews</button>
         </div>
         <div style="display:flex; gap:5px; margin-top:5px;">
             <input type="text" id="comment-input-${post.id}" placeholder="Review..." style="flex:1; padding:8px; border-radius:6px; border:1px solid var(--border); background:var(--card-bg); color:var(--text-main);">
@@ -273,7 +471,6 @@ async function fetchAndRenderFeed(searchQuery = "", page = 1) {
         const response = await fetch(url);
         const data = await response.json();
 
-        // If this is page 1, completely clear the old posts out
         if (page === 1) {
             postsContainer.innerHTML = "";
             currentPage = 1;
@@ -287,7 +484,6 @@ async function fetchAndRenderFeed(searchQuery = "", page = 1) {
             return;
         }
 
-        // Draw the new posts
         data.data.forEach(post => {
             const el = document.createElement("div");
             el.className = "post-card";
@@ -295,8 +491,7 @@ async function fetchAndRenderFeed(searchQuery = "", page = 1) {
             postsContainer.appendChild(el);
         });
 
-        // Hide or show the "Load More" button depending on how many posts came back
-        if (data.data.length < 5) { // 5 is our limit from the backend
+        if (data.data.length < 5) {
             if(loadMoreBtn) loadMoreBtn.classList.add("hidden");
             if(noMorePostsText && postsContainer.innerHTML !== "") noMorePostsText.classList.remove("hidden");
         } else {
@@ -306,7 +501,6 @@ async function fetchAndRenderFeed(searchQuery = "", page = 1) {
     } catch (err) { console.error("Feed load error:", err); }
 }
 
-// "Load More" Button Click
 if (loadMoreBtn) {
     loadMoreBtn.addEventListener("click", () => {
         currentPage++;
@@ -337,7 +531,7 @@ if (searchInput) {
 if (clearSearchBtn) {
     clearSearchBtn.addEventListener("click", () => {
         if (searchInput) searchInput.value = "";
-        fetchAndRenderFeed("", 1); // Fetch all posts again from page 1
+        fetchAndRenderFeed("", 1);
     });
 }
 
@@ -493,7 +687,7 @@ window.loadComments = async (postId, postAuthorId) => {
         container.innerHTML = data.data.map(c => {
             let actionBtnsHtml = `<button onclick="window.reportComment(${c.id})" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.8rem;" title="Report this review">🚩 Report</button>`;
 
-            if (currentUser && (currentUser.role === 'admin' || currentUser.user_id === postAuthorId)) {
+            if (currentUser && (currentUser.role === 'admin' || currentUser.user_id === postAuthorId || c.is_mine)) {
                 actionBtnsHtml += `<button onclick="window.deleteComment(${c.id}, ${postId}, ${postAuthorId})" style="background:none; border:none; color:red; cursor:pointer; font-size:0.8rem; margin-left:10px;" title="Delete this review">🗑️ Delete</button>`;
             }
 

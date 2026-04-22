@@ -1,4 +1,4 @@
-/* 1. THE VARIABLES - Everything follows these rules */
+/* 1. THE VARIABLES */
 :root {
     --bg-color: #f4f7f6;
     --card-bg: #ffffff;
@@ -26,6 +26,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-main);
     transition: background 0.3s, color 0.3s;
+    padding-bottom: 2rem;
 }
 
 /* 3. LAYOUT COMPONENTS */
@@ -38,34 +39,41 @@ body {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-.container { max-width: 800px; margin: 3rem auto; padding: 0 1rem; }
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
 
 .card, .post-card {
     background: var(--card-bg);
-    padding: 2.5rem;
+    padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-    margin: 0 auto;
+    margin: 0 auto 1.5rem auto;
     border: 1px solid var(--border);
+    width: 100%;
 }
 
 #auth-section { max-width: 400px; }
 
 /* 4. FORM ELEMENTS */
-.input-group { margin-bottom: 1.2rem; }
-.input-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
-
 input, textarea {
     width: 100%;
     padding: 0.75rem;
-    background-color: var(--card-bg); /* Follows theme */
-    color: var(--text-main);          /* Follows theme */
+    background-color: var(--bg-color);
+    color: var(--text-main);
     border: 1px solid var(--border);
     border-radius: 6px;
     outline: none;
     transition: border-color 0.2s;
+    margin-bottom: 10px;
 }
 
 input:focus, textarea:focus { border-color: var(--primary); }
@@ -78,9 +86,12 @@ button {
     font-weight: 600;
     padding: 0.75rem 1.5rem;
     transition: all 0.2s;
+    width: auto; /* This stops the buttons from being giant! */
+    display: inline-block;
+    text-align: center;
 }
 
-.primary-btn { background-color: var(--primary); color: white; width: 100%; }
+.primary-btn { background-color: var(--primary); color: white; }
 .primary-btn:hover { background-color: var(--primary-hover); }
 
 .secondary-btn {
@@ -88,31 +99,68 @@ button {
     color: var(--text-main);
     border: 1px solid var(--border);
 }
-
 .secondary-btn:hover { background-color: var(--bg-color); }
 
-.theme-toggle {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-main);
-    padding: 5px 12px;
-    font-size: 0.8rem;
+/* specific button widths */
+.w-100 { width: 100% !important; }
+
+/* 6. UTILITIES & SPECIFICS */
+.hidden { display: none !important; }
+
+/* Row wrappers for Desktop */
+.flex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 
-/* 6. UTILITIES */
-.subtitle { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem; }
-.feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-.post-content { margin-bottom: 1rem; line-height: 1.5; font-size: 1.1rem; font-weight: 500;}
-.post-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
-.hidden { display: none !important; }
-.error-text { color: #ef4444; margin-top: 1rem; font-size: 0.9rem; text-align: center; }
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.search-bar input {
+    flex: 1; /* Input takes all empty space */
+    margin-bottom: 0;
+}
 
-.secondary-btn {
-    background-color: var(--card-bg);
-    color: var(--text-main);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
-    display: inline-block; /* Essential for labels */
+/* --- 7. MOBILE RESPONSIVE RULES --- */
+/* If the screen is smaller than 600px (Mobile Phones), run this code: */
+@media (max-width: 600px) {
+    .navbar {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+    }
+    .nav-buttons {
+        justify-content: center;
+        width: 100%;
+    }
+    .nav-buttons button {
+        flex: 1; /* Make buttons share space evenly on mobile */
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .flex-row {
+        flex-direction: column;
+        align-items: stretch; /* Stack items vertically */
+    }
+    .flex-row > div {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    .flex-row button { width: 100%; }
+
+    .search-bar {
+        flex-direction: column; /* Stack search input and buttons */
+    }
+    .search-bar button {
+        width: 100%;
+    }
+
+    .card, .post-card {
+        padding: 1.25rem; /* Slightly smaller padding for small screens */
+    }
 }

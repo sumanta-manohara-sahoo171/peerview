@@ -4,137 +4,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PeerView</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+
     <nav class="navbar">
-        <h2>PeerView</h2>
-        <div style="display: flex; gap: 10px;">
-            <button id="nav-feed-btn" class="hidden secondary-btn">Live Feed</button>
-            <button id="nav-profile-btn" class="hidden secondary-btn">My Profile</button>
-            <button id="logout-btn" class="hidden secondary-btn">Log Out</button>
-            <button id="nav-admin-btn" class="hidden secondary-btn">Analytics</button>
-            <button id="theme-toggle-btn" class="theme-toggle">🌙 Dark Mode</button>
+        <div style="font-weight: 800; font-size: 1.5rem; color: var(--primary);">PeerView</div>
+        <div class="nav-buttons">
+            <button id="theme-toggle-btn" class="secondary-btn">🌙 Dark Mode</button>
+            <button id="nav-feed-btn" class="secondary-btn hidden">Feed</button>
+            <button id="nav-profile-btn" class="secondary-btn hidden">Profile</button>
+            <button id="nav-admin-btn" class="secondary-btn hidden">Admin</button>
+            <button id="logout-btn" class="secondary-btn hidden">Logout</button>
         </div>
     </nav>
 
-    <main class="container">
-        <section id="auth-section" class="card">
-            <h3 style="margin-bottom: 0.5rem;">Welcome Back</h3>
-            <p class="subtitle" id="auth-toggle-text">
-                Don't have an account? <a href="#" id="show-register" style="color: var(--primary); font-weight: 600; text-decoration: none;">Sign Up</a>
-            </p>
+    <div id="auth-section" class="container card">
+        <h3 style="text-align:center; margin-top:0; font-size: 1.5rem;">Welcome Back</h3>
 
-            <form id="login-form">
-                <div class="input-group">
-                    <label>Username</label>
-                    <input type="text" id="username" placeholder="Enter your username" required>
-                </div>
-                <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
-                </div>
+        <form id="login-form">
+            <div id="username-group" class="hidden">
+                <label style="font-weight: bold; font-size: 0.9rem;">Username</label>
+                <input type="text" id="username" placeholder="Choose a username">
+            </div>
 
-                <button type="submit" id="auth-submit-btn" class="primary-btn">Sign In</button>
-                <p id="login-error" class="error-text hidden"></p>
+            <div id="email-group">
+                <label style="font-weight: bold; font-size: 0.9rem;">Email</label>
+                <input type="email" id="email" placeholder="Enter your email address" required>
+            </div>
+
+            <div id="password-group">
+                <label style="font-weight: bold; font-size: 0.9rem;">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" id="auth-submit-btn" class="primary-btn w-100">Sign In</button>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                <a href="#" id="forgot-password-link" style="font-size:0.85rem; color:var(--primary); text-decoration: none;">Forgot Password?</a>
+                <a href="#" id="verify-link" style="font-size:0.85rem; color:var(--primary); text-decoration: none;">Have a verification code?</a>
+            </div>
+
+            <p id="login-error" class="hidden" style="color: #dc2626; margin-top: 10px; font-size: 0.9rem; text-align: center;"></p>
+        </form>
+
+        <p style="text-align:center; margin-top:15px; font-size:0.9rem; border-top: 1px solid var(--border); padding-top: 15px;">
+            Don't have an account? <a href="#" id="show-register" style="color: var(--primary); font-weight: bold; text-decoration: none;">Sign Up</a>
+        </p>
+    </div>
+
+    <div id="feed-section" class="container hidden">
+        <div class="card">
+            <h3 style="margin-top:0; margin-bottom: 10px;">Create a Post</h3>
+            <form id="create-post-form">
+                <textarea id="new-post-content" placeholder="Share your project, thoughts, or ask for peer review..." required rows="3"></textarea>
+
+                <div class="flex-row">
+                    <div>
+                        <input type="file" id="file-upload" accept=".jpg,.jpeg,.png,.gif,.pdf" style="display:none;">
+                        <label for="file-upload" class="secondary-btn" style="cursor:pointer; font-size:0.8rem; margin:0;">📎 Attach File</label>
+                        <span id="file-name-display" style="font-size:0.8rem; margin-left:10px; color:var(--text-muted);"></span>
+                    </div>
+                    <button type="submit" class="primary-btn">Post</button>
+                </div>
             </form>
-        </section>
+        </div>
 
-        <section id="feed-section" class="hidden">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0;">Live Feed</h2>
-                <button id="load-posts-btn" class="secondary-btn" style="width: auto; margin: 0; padding: 5px 15px;">Refresh Feed</button>
-            </div>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search posts...">
+            <button id="search-btn" class="primary-btn">Search</button>
+            <button id="clear-search-btn" class="secondary-btn">Clear</button>
+        </div>
 
-            <div class="card" style="margin-bottom: 20px;">
-                <h3 style="margin-top: 0; margin-bottom: 15px;">Create a Post</h3>
-                <form id="create-post-form">
-                    <textarea id="new-post-content" rows="3" placeholder="What's on your mind? Share your thoughts, project ideas, or study questions here..." style="width: 100%; box-sizing: border-box; padding: 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-color); color: var(--text-main); font-family: inherit; resize: vertical;"></textarea>
+        <button id="load-posts-btn" class="hidden">Hidden Load Trigger</button>
+        <div id="posts-container"></div>
 
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 10px;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <label for="file-upload" class="secondary-btn" style="cursor: pointer; padding: 8px 15px; white-space: nowrap; margin: 0;">📎 Attach File</label>
-                            <input type="file" id="file-upload" class="hidden" accept=".png, .jpg, .jpeg, .gif, .pdf, .docx">
-                            <span id="file-name-display" style="font-size: 0.85rem; color: var(--text-muted); word-break: break-all;"></span>
-                        </div>
+        <div style="text-align:center; margin-top:15px;">
+            <button id="load-more-btn" class="secondary-btn hidden w-100">Load More Posts</button>
+            <p id="no-more-posts-text" class="hidden" style="color:var(--text-muted); font-size:0.9rem;">You've reached the end of the feed.</p>
+        </div>
+    </div>
 
-                        <button type="submit" class="primary-btn" style="width: auto; padding: 8px 25px; margin: 0; white-space: nowrap;">Post to Feed</button>
-                    </div>
-                </form>
-            </div>
+    <div id="profile-section" class="container hidden">
+        <div class="card" style="text-align:center;">
+            <div id="profile-avatar" style="width:80px; height:80px; background:var(--primary); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 15px auto;"></div>
+            <h2 id="profile-username" style="margin:0 0 5px 0;"></h2>
+            <span id="profile-role" style="background:var(--border); padding:3px 8px; border-radius:12px; font-size:0.75rem; font-weight:bold;"></span>
+            <p id="profile-bio" style="color:var(--text-muted); margin:15px 0;"></p>
+            <button id="edit-profile-btn" class="secondary-btn">Edit Profile</button>
+        </div>
 
-            <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 10px; width: 100%;">
-                <input type="text" id="search-input" placeholder="Search posts for topics, keywords, or questions..." style="flex-grow: 1; min-width: 0; padding: 12px 15px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-size: 1rem; box-sizing: border-box; margin: 0;">
+        <h3 style="margin-top:30px; border-bottom: 2px solid var(--border); padding-bottom: 10px;">My Posts</h3>
+        <button id="load-my-posts-btn" class="hidden">Hidden Load Trigger</button>
+        <div id="my-posts-container"></div>
+    </div>
 
-                <button id="search-btn" class="primary-btn" style="width: auto; padding: 12px 20px; white-space: nowrap; flex-shrink: 0; margin: 0;">Search</button>
-                <button id="clear-search-btn" class="secondary-btn" style="width: auto; padding: 12px 20px; white-space: nowrap; flex-shrink: 0; margin: 0;">Clear</button>
-            </div>
+    <div id="admin-section" class="container hidden">
+        <div class="card">
+            <h2 style="margin-top:0;">🛡️ Admin Dashboard</h2>
+            <p style="font-size: 1.1rem;">Total Posts in System: <strong id="stat-total-posts" style="color: var(--primary);">0</strong></p>
+            <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+            <h3>🚩 Reported Reviews (Moderation Queue)</h3>
+            <div id="reported-comments-container"></div>
+        </div>
+    </div>
 
-            <div id="posts-container"></div>
-            <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-                <button id="load-more-btn" class="secondary-btn hidden" style="width: auto; padding: 8px 25px;">Load More Posts ↓</button>
-                <p id="no-more-posts-text" class="hidden" style="color: var(--text-muted); font-size: 0.9rem;">You've reached the end of the feed.</p>
-            </div>
-        </section>
-
-        <section id="profile-section" class="hidden">
-            <div class="card" style="margin-bottom: 20px; display: flex; align-items: center; gap: 20px;">
-                <div id="profile-avatar" style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;">
-                    ?
-                </div>
-
-                <div style="flex: 1;">
-                    <h2 id="profile-username" style="margin: 0; font-size: 1.5rem;">Loading...</h2>
-                    <p id="profile-role" style="color: var(--primary); font-weight: 600; font-size: 0.85rem; margin: 5px 0;">Student</p>
-                    <p id="profile-bio" style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;">Loading bio...</p>
-                </div>
-
-                <button id="edit-profile-btn" class="secondary-btn">Edit Profile</button>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3>My Posts</h3>
-                <button id="load-my-posts-btn" class="secondary-btn">Refresh My Posts</button>
-            </div>
-            <div id="my-posts-container"></div>
-        </section>
-
-        <section id="admin-section" class="hidden">
-            <h2>Admin Control Panel</h2>
-
-            <div class="card" style="margin-bottom: 20px;">
-                <h3>Platform Stats</h3>
-                <p style="font-size: 1.2rem;">Total Posts on Platform: <strong id="stat-total-posts" style="color: var(--primary);">0</strong></p>
-            </div>
-
-            <div class="card">
-                <h3 style="color: #dc2626;">🚩 Reported Reviews</h3>
-                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
-                    These reviews have been flagged by students for moderation. As an admin, you can see the true identities behind the anonymity.
-                </p>
-                <div id="reported-comments-container">
-                    </div>
-            </div>
-        </section>
-
-    </main>
-
-    <div id="edit-profile-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000;">
-        <div class="card" style="width: 400px; max-width: 90%; background: var(--bg-color);">
-            <h3 style="margin-top: 0;">Edit Profile</h3>
-
+    <div id="edit-profile-modal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; z-index:1000;">
+        <div class="card" style="width:90%; max-width:400px; margin: 0;">
+            <h3 style="margin-top:0;">Edit Profile</h3>
             <form id="edit-profile-form">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">About Me (Bio)</label>
-                <textarea id="edit-bio" rows="4" style="width: 100%; margin-bottom: 15px; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main);"></textarea>
-
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Profile Picture</label>
-                <input type="file" id="edit-avatar" accept="image/*" style="margin-bottom: 20px; width: 100%;">
-
-                <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                    <button type="button" id="close-modal-btn" class="secondary-btn">Cancel</button>
-                    <button type="submit" class="primary-btn">Save Changes</button>
-                </div>
+                <label style="font-size: 0.9rem; font-weight: bold;">Bio</label>
+                <textarea id="edit-bio" rows="3"></textarea>
+                <label style="font-size: 0.9rem; font-weight: bold; display: block; margin-top: 10px;">Profile Picture</label>
+                <input type="file" id="edit-avatar" accept="image/*" style="margin-bottom: 20px;">
+                <button type="submit" class="primary-btn w-100">Save Changes</button>
             </form>
+            <button id="close-modal-btn" class="secondary-btn w-100" style="margin-top:10px;">Cancel</button>
+        </div>
+    </div>
+
+    <div id="forgot-password-modal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; z-index:1000;">
+        <div class="card" style="width:90%; max-width:400px; margin: 0;">
+            <h3 style="margin-top: 0;">Reset Password</h3>
+            <div id="fp-step-1">
+                <p style="font-size:0.9rem; margin-bottom:15px; color: var(--text-muted);">Enter your registered email to receive a secure 6-digit OTP.</p>
+                <input type="email" id="fp-email" placeholder="Your Email Address">
+                <button id="fp-send-otp-btn" class="primary-btn w-100">Send OTP</button>
+            </div>
+            <div id="fp-step-2" class="hidden">
+                <p style="font-size:0.9rem; margin-bottom:15px; color: var(--text-muted);">Enter the OTP sent to your email and choose a new password.</p>
+                <input type="text" id="fp-otp" placeholder="6-digit OTP">
+                <input type="password" id="fp-new-password" placeholder="New Password">
+                <button id="fp-reset-btn" class="primary-btn w-100">Confirm Password Reset</button>
+            </div>
+            <p id="fp-msg" style="margin-top:10px; font-size:0.85rem; text-align: center; font-weight: bold;"></p>
+            <button id="fp-close-btn" class="secondary-btn w-100" style="margin-top:10px;">Cancel</button>
+        </div>
+    </div>
+
+    <div id="verify-modal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; z-index:1000;">
+        <div class="card" style="width:90%; max-width:400px; margin: 0;">
+            <h3 style="margin-top: 0;">Verify Your Email</h3>
+            <p style="font-size:0.9rem; margin-bottom:15px; color: var(--text-muted);">We sent a 6-digit verification code to your email. Enter it below to activate your account.</p>
+            <input type="email" id="verify-email" placeholder="Your Email Address">
+            <input type="text" id="verify-otp" placeholder="6-digit OTP Code">
+            <button id="verify-submit-btn" class="primary-btn w-100">Verify & Activate</button>
+            <p id="verify-msg" style="margin-top:10px; font-size:0.85rem; text-align: center; font-weight: bold;"></p>
+            <button id="verify-close-btn" class="secondary-btn w-100" style="margin-top:10px;">Cancel</button>
         </div>
     </div>
 
